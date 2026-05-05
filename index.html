@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nardelli Lectores</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#111;
+color:#fff;
+text-align:center;
+}
+
+header{
+background:#c40000;
+padding:20px;
+font-size:28px;
+font-weight:bold;
+}
+
+main{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:30px;
+border-radius:15px;
+margin-top:20px;
+}
+
+.precio{
+font-size:64px;
+font-weight:bold;
+color:#ffd400;
+margin-top:20px;
+}
+
+.small{
+font-size:20px;
+color:#aaa;
+margin-top:10px;
+}
+
+.msg{
+font-size:28px;
+margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>Nardelli Lectores</header>
+
+<main>
+
+<div id="resultado" class="card">
+<div class="msg">Escanee un producto</div>
+</div>
+
+</main>
+
+<script>
+
+const API="https://script.google.com/macros/s/AKfycbx81plecIUhPbJrbdT4bJwccGL93wa18eVoHbGSUIzbyEbQZvbPC-X-VM2hULlyul5qsw/exec";
+
+let buffer = "";
+let timeout = null;
+
+document.addEventListener("keydown", function(e){
+
+  if(timeout){
+    clearTimeout(timeout);
+  }
+
+  if(e.key === "Enter"){
+
+    if(buffer.length > 5){
+      procesar(buffer);
+    }
+
+    buffer = "";
+    return;
+  }
+
+  buffer += e.key;
+
+  timeout = setTimeout(() => {
+    buffer = "";
+  }, 200);
+
+});
+
+function procesar(codigo){
+
+  document.getElementById("resultado").innerHTML =
+  "<div class='msg'>Buscando...</div>";
+
+  fetch(API + "?codigo=" + encodeURIComponent(codigo))
+  .then(r => r.text())
+  .then(txt => {
+
+    let data;
+
+    try {
+      data = JSON.parse(txt);
+    } catch {
+      mostrarError("Error de lectura");
+      return;
+    }
+
+    if(data.ok){
+
+      document.getElementById("resultado").innerHTML = `
+      <div class="msg">${data.nombre}</div>
+      <div class="small">Código: ${data.codigo}</div>
+      <div class="small">${data.categoria}</div>
+      <div class="precio">$ ${Number(data.precio).toLocaleString('es-AR',{minimumFractionDigits:2})}</div>
+      `;
+
+    } else {
+
+      mostrarError("Producto no encontrado");
+
+    }
+
+  })
+  .catch(() => {
+    mostrarError("Error de conexión");
+  });
+
+}
+
+function mostrarError(msg){
+  document.getElementById("resultado").innerHTML = `
+  <div class="msg">${msg}</div>
+  `;
+}
+
+</script>
+
+</body>
+</html>
