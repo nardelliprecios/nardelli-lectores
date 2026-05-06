@@ -92,12 +92,14 @@ box-shadow:0 -2px 10px rgba(0,0,0,0.3);
 
 </main>
 
+
 <script>
 
 const API="https://script.google.com/macros/s/AKfycbx81plecIUhPbJrbdT4bJwccGL93wa18eVoHbGSUIzbyEbQZvbPC-X-VM2hULlyul5qsw/exec";
 
 let buffer = "";
 let timeout = null;
+let bloqueado = false;
 
 document.addEventListener("keydown", function(e){
 
@@ -107,12 +109,21 @@ document.addEventListener("keydown", function(e){
 
   if(e.key === "Enter"){
 
-    if(buffer.length > 5){
-      procesar(buffer);
-    }
-
+  if(bloqueado){
     buffer = "";
     return;
+  }
+
+  if(buffer.length > 5){
+
+    bloqueado = true;
+
+    procesar(buffer);
+
+  }
+
+  buffer = "";
+  return;
   }
 
   buffer += e.key;
@@ -151,15 +162,34 @@ function procesar(codigo){
       <div class="precio">$ ${Number(data.precio).toLocaleString('es-AR',{minimumFractionDigits:2})}</div>
       `;
 
+      setTimeout(() => {
+        bloqueado = false;
+        document.getElementById("resultado").innerHTML = `
+        <div class="msg">Escanee su código</div>
+        `;
+      }, 15000);
+
     } else {
 
       mostrarError("Lo sentimos, este producto no fué encontrado, consulte en recepción");
 
+      setTimeout(() => {
+        bloqueado = false;
+        document.getElementById("resultado").innerHTML = `
+        <div class="msg">Escanee su código</div>
+        `;
+      }, 15000);
     }
 
   })
   .catch(() => {
-    mostrarError("Error de conexión");
+
+  mostrarError("Error de conexión");
+
+  setTimeout(() => {
+    bloqueado = false;
+  }, 3000);
+
   });
 
 }
@@ -173,7 +203,7 @@ function mostrarError(msg){
 </script>
 
 <footer id="footer">
-  ¡Muchas Gracias por Confiar!
+  ¡Gracias por su Consulta!
 </footer>
 
 </body>
