@@ -40,7 +40,7 @@ width:100%;
 }
 
 .precio{
-font-size:140px;
+font-size:120px;
 font-weight:bold;
 color:#ffd400;
 margin-top:20px;
@@ -54,13 +54,13 @@ text-align:center;
 }
 
 .small{
-font-size:30px;
+font-size:26px;
 color:#aaa;
 margin-top:10px;
 }
 
 .msg{
-font-size:40px;
+font-size:50px;
 margin-top:20px;
 }
 
@@ -161,11 +161,30 @@ function procesar(codigo){
     if(data.ok){
 
       document.getElementById("resultado").innerHTML = `
+
       <div class="barcode">${codigo}</div>
+
       <div class="msg">${data.nombre}</div>
+
       <div class="small">Código: ${data.codigo}</div>
+
       <div class="small">${data.categoria}</div>
-      <div class="precio">$ ${Number(data.precio).toLocaleString('es-AR',{minimumFractionDigits:2})}</div>
+
+      ${data.peso ? `
+      <div class="small">
+      Peso: ${data.peso.toFixed(3)} Kg
+      </div>
+
+      <div class="small">
+      Precio x Kg:
+      $ ${Number(data.precio).toLocaleString('es-AR',{minimumFractionDigits:2})}
+      </div>
+      ` : ``}
+
+      <div class="precio">
+      $ ${Number(data.precioFinal).toLocaleString('es-AR',{minimumFractionDigits:2})}
+      </div>
+
       `;
 
       setTimeout(() => {
@@ -173,7 +192,7 @@ function procesar(codigo){
         document.getElementById("resultado").innerHTML = `
         <div class="srch">Escanee su código</div>
         `;
-      }, 5000);
+      }, 6500);
 
     } else {
 
@@ -184,7 +203,7 @@ function procesar(codigo){
         document.getElementById("resultado").innerHTML = `
         <div class="srch">Escanee su código</div>
         `;
-      }, 5000);
+      }, 6500);
     }
 
   })
