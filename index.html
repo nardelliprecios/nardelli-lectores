@@ -154,7 +154,19 @@ function procesar(codigo){
     try {
       data = JSON.parse(txt);
     } catch {
+
       mostrarError("Error de lectura");
+
+      setTimeout(() => {
+
+        bloqueado = false;
+
+        document.getElementById("resultado").innerHTML = `
+        <div class="msg">Escanee su código</div>
+        `;
+
+      }, 3000);
+
       return;
     }
 
@@ -172,7 +184,7 @@ function procesar(codigo){
 
       ${data.peso ? `
       <div class="small">
-      Peso: ${data.peso.toFixed(3)} Kg
+      Peso: ${data.peso} Kg
       </div>
 
       <div class="small">
@@ -203,17 +215,22 @@ function procesar(codigo){
         document.getElementById("resultado").innerHTML = `
         <div class="srch">Escanee su código</div>
         `;
-      }, 2500);
+      }, 6500);
     }
 
   })
   .catch(() => {
 
-  mostrarError("Error de conexión");
+    mostrarError("Error de conexión");
 
-  setTimeout(() => {
-    bloqueado = false;
-  }, 2000);
+    setTimeout(() => {
+
+      bloqueado = false;
+      document.getElementById("resultado").innerHTML = `
+      <div class="msg">Escanee su código</div>
+      `;
+
+    }, 3000);
 
   });
 
